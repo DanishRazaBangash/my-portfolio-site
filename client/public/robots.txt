@@ -5,6 +5,12 @@ Disallow: /admin
 Disallow: /admin/
 Disallow: /api/
 
+# The blog list is rendered from this endpoint client-side. Googlebot's renderer
+# obeys robots.txt for fetch/XHR too, so blocking it left /blog rendering as
+# "No posts found." — which Google reported as a Soft 404. Allow wins over
+# Disallow on the longer path, so only this read endpoint is exposed.
+Allow: /api/posts
+
 # ?q= is the blog's search UI, not a distinct page worth crawling
 Disallow: /*?q=
 
