@@ -17,6 +17,21 @@ const projects = [
     badge: null,
   },
   {
+    title: 'Footalyzer',
+    subtitle: 'AI-Powered Football Companion App',
+    description:
+      'A full-stack football companion delivering AI-generated match briefings alongside live scores and real-time match data across major competitions, including the Premier League and Champions League.',
+    longDescription:
+      'Built and deployed a full-stack football companion platform delivering AI-generated match briefings alongside live scores and real-time match data across major competitions, including the Premier League and Champions League.\n\nDesigned a Node.js/Express backend with MongoDB and Redis (Upstash), using BullMQ for background job processing and Socket.io for real-time score and event updates.\n\nIntegrated Clerk authentication and a Stripe-powered tiered subscription model, taking the product from concept to a live, monetised deployment.',
+    tech: [
+      'Next.js 14', 'Express.js', 'MongoDB', 'Redis (Upstash)',
+      'BullMQ', 'Socket.io', 'Clerk', 'Stripe',
+    ],
+    github: null,
+    live: 'https://footalyzer.danishraza.dev',
+    badge: null,
+  },
+  {
     title: 'Real-Time Chat App',
     subtitle: 'WebSocket-Powered Messaging Platform',
     description:
@@ -39,18 +54,6 @@ const projects = [
     github: 'https://github.com/danishrazabangash',
     live: null,
     badge: null,
-  },
-  {
-    title: 'World Cup Companion',
-    subtitle: 'Football / Soccer App Concept',
-    description:
-      'A concept app for real-time World Cup match tracking, standings, and social discussion — exploring live sports data APIs and community features.',
-    longDescription:
-      "A passion project exploring live football data APIs, real-time score updates via WebSockets, group stage standings logic, match prediction pools, and community discussion threads. A nod to the beautiful game — Danish's personal interest beyond the stack.",
-    tech: ['React.js', 'Node.js', 'WebSockets', 'Football API', 'MongoDB'],
-    github: null,
-    live: null,
-    badge: 'Concept',
   },
 ]
 
@@ -78,7 +81,7 @@ function ProjectCard({ project, onClick }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-1 text-[10px] px-2 py-0.5 bg-white/10 text-white/70 rounded-full border border-white/12 hover:bg-white/20 hover:text-white transition-colors"
+                className="pill-live flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border transition-colors"
               >
                 <ExternalLink size={9} /> Visit Site
               </a>
@@ -142,7 +145,7 @@ function ProjectModal({ project, onClose }) {
                         href={project.live}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-1 text-[10px] px-2 py-0.5 bg-white/10 text-white/70 rounded-full border border-white/12 hover:bg-white/20 hover:text-white transition-colors"
+                        className="pill-live flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border transition-colors"
                       >
                         <ExternalLink size={9} /> Visit Site
                       </a>

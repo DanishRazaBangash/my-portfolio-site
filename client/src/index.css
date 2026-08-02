@@ -160,6 +160,31 @@
   .dark .glow-sm { box-shadow: 0 0 12px rgba(255,255,255,0.07); }
   .dark .glow-md { box-shadow: 0 0 24px rgba(255,255,255,0.10), 0 0 60px rgba(255,255,255,0.04); }
 
+  /* ── "Visit site" pill — the one non-monochrome accent on the site ──
+     Deliberately not built from Tailwind's white utilities: the light-mode
+     block below inverts those, which would flip the green to grey. Emerald is
+     shifted per theme so the small 10px label keeps its contrast either way. */
+  .pill-live {
+    background: rgba(5, 150, 105, 0.10);
+    border-color: rgba(5, 150, 105, 0.32);
+    color: #047857;
+  }
+  .pill-live:hover {
+    background: rgba(5, 150, 105, 0.17);
+    border-color: rgba(5, 150, 105, 0.48);
+    color: #065f46;
+  }
+  .dark .pill-live {
+    background: rgba(52, 211, 153, 0.12);
+    border-color: rgba(52, 211, 153, 0.28);
+    color: #6ee7b7;
+  }
+  .dark .pill-live:hover {
+    background: rgba(52, 211, 153, 0.20);
+    border-color: rgba(52, 211, 153, 0.46);
+    color: #a7f3d0;
+  }
+
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
