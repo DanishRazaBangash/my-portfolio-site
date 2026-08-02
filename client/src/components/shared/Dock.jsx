@@ -114,8 +114,8 @@ export default function Dock() {
 
   const downloadResume = () => {
     const a = document.createElement('a')
-    a.href     = '/Danish-Raza-resume.pdf'
-    a.download = 'Danish-Raza-resume.pdf'
+    a.href     = '/Danish-Raza-Bangash-Resume.pdf'
+    a.download = 'Danish-Raza-Bangash-Resume.pdf'
     a.click()
   }
 

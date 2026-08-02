@@ -1,14 +1,16 @@
 import { useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { Send, Mail, CheckCircle } from 'lucide-react'
-import { GitHubIcon, LinkedInIcon } from '@/components/shared/SocialIcons'
+import { GitHubIcon, LinkedInIcon, DevToIcon } from '@/components/shared/SocialIcons'
 import api from '@/lib/api'
 import toast from 'react-hot-toast'
+import { EMAIL, PROFILES } from '@/lib/seo'
 
 const socials = [
-  { icon: GitHubIcon,   label: 'GitHub',   href: 'https://github.com/danishrazabangash',         sub: 'danishrazabangash' },
-  { icon: LinkedInIcon, label: 'LinkedIn', href: 'https://linkedin.com/in/danish-raza-bangash', sub: 'danish-raza-bangash' },
-  { icon: Mail,         label: 'Email',    href: 'mailto:danishrazabangash@gmail.com',           sub: 'danishrazabangash@gmail.com' },
+  { icon: GitHubIcon,   label: 'GitHub',   href: PROFILES.github,     sub: 'danishrazabangash' },
+  { icon: LinkedInIcon, label: 'LinkedIn', href: PROFILES.linkedin,   sub: 'danish-raza-bangash' },
+  { icon: DevToIcon,    label: 'DEV',      href: PROFILES.devto,      sub: 'dev.to/danishrazabangash' },
+  { icon: Mail,         label: 'Email',    href: `mailto:${EMAIL}`,   sub: EMAIL },
 ]
 
 const init = { name: '', email: '', subject: '', message: '' }
@@ -136,7 +138,7 @@ export default function Contact() {
                 key={label}
                 href={href}
                 target={href.startsWith('mailto') ? undefined : '_blank'}
-                rel="noopener noreferrer"
+                rel={href.startsWith('mailto') ? undefined : 'me noopener noreferrer'}
                 className="flex items-center gap-4 glass glass-hover rounded-2xl p-4 sm:p-5 transition-all duration-200 group"
               >
                 <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/06 group-hover:bg-white/12 transition-colors">

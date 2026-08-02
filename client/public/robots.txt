@@ -1,6 +1,11 @@
+# https://danishraza.dev — Danish Raza Bangash
 User-agent: *
 Allow: /
 Disallow: /admin
+Disallow: /admin/
 Disallow: /api/
+
+# ?q= is the blog's search UI, not a distinct page worth crawling
+Disallow: /*?q=
 
 Sitemap: https://danishraza.dev/sitemap.xml

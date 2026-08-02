@@ -12,6 +12,39 @@ import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import SEOMeta from '@/components/shared/SEOMeta'
 import toast from 'react-hot-toast'
+import { FULL_NAME, ROLE, LOCATION, PROFILES } from '@/lib/seo'
+
+/*
+ * Visible authorship. The BlogPosting schema names an author, but Google's
+ * quality systems weight a byline a reader can actually see, and it gives every
+ * post an internal link back to the homepage entity with the full name as
+ * anchor text.
+ */
+function AuthorBio() {
+  return (
+    <aside className="glass rounded-2xl p-6 mt-16 mb-4">
+      <p className="text-xs text-white/30 uppercase tracking-widest mb-3">Written by</p>
+      <Link to="/" className="text-white font-semibold text-base hover:text-white/80 transition-colors">
+        {FULL_NAME}
+      </Link>
+      <p className="text-white/50 text-sm mt-1">{ROLE} · {LOCATION}</p>
+      <p className="text-white/60 text-sm leading-relaxed mt-3">
+        Final-year Computer Science student at the University of Peshawar and the architect of
+        BotForge, a no-code AI chatbot platform whose four-tier parallel RAG pipeline reaches
+        ~90% retrieval accuracy.{' '}
+        <Link to="/" state={{ scrollTo: '#about' }} className="text-white/80 underline underline-offset-2 hover:text-white transition-colors">
+          More about me
+        </Link>
+        .
+      </p>
+      <div className="flex items-center gap-3 mt-4 text-xs text-white/40">
+        <a href={PROFILES.github}   target="_blank" rel="me noopener noreferrer" className="hover:text-white transition-colors">GitHub</a>
+        <a href={PROFILES.linkedin} target="_blank" rel="me noopener noreferrer" className="hover:text-white transition-colors">LinkedIn</a>
+        <a href={PROFILES.devto}    target="_blank" rel="me noopener noreferrer" className="hover:text-white transition-colors">DEV</a>
+      </div>
+    </aside>
+  )
+}
 
 function CommentForm({ slug }) {
   const [form, setForm] = useState({ name: '', email: '', body: '' })
@@ -123,7 +156,14 @@ export default function BlogPost() {
             </Link>
 
             {post.coverImage && (
-              <img src={post.coverImage} alt={post.title} className="w-full h-56 object-cover rounded-2xl mb-8 opacity-80" />
+              <img
+                src={post.coverImage}
+                alt={`${post.title} — article cover`}
+                width="672"
+                height="224"
+                fetchPriority="high"
+                className="w-full h-56 object-cover rounded-2xl mb-8 opacity-80"
+              />
             )}
 
             <div className="flex flex-wrap gap-1.5 mb-4">
@@ -134,8 +174,18 @@ export default function BlogPost() {
 
             <h1 className="text-2xl sm:text-4xl font-bold text-white leading-tight mb-4">{post.title}</h1>
 
-            <div className="flex items-center gap-4 text-xs text-white/35 mb-10 pb-6 border-b border-white/08">
-              <span>{formatDate(post.publishedAt)}</span>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-white/35 mb-10 pb-6 border-b border-white/08">
+              <span>
+                By{' '}
+                <Link
+                  to="/"
+                  rel="author"
+                  className="text-white/60 hover:text-white transition-colors"
+                >
+                  {FULL_NAME}
+                </Link>
+              </span>
+              <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
               {post.readingTime && <span className="flex items-center gap-1"><Clock size={11} /> {post.readingTime}</span>}
               {post.views > 0 && <span className="flex items-center gap-1"><Eye size={11} /> {post.views >= 1000 ? `${(post.views / 1000).toFixed(1)}k` : post.views} views</span>}
             </div>
@@ -163,7 +213,9 @@ export default function BlogPost() {
                       </code>
                     )
                   },
-                  h1: ({ children }) => <h1 className="text-white text-2xl font-bold mt-8 mb-4">{children}</h1>,
+                  // Demoted a level: the post title is already the page's H1, and
+                  // a second H1 inside the body splits the document outline.
+                  h1: ({ children }) => <h2 className="text-white text-2xl font-bold mt-8 mb-4">{children}</h2>,
                   h2: ({ children }) => <h2 className="text-white text-xl font-semibold mt-7 mb-3">{children}</h2>,
                   h3: ({ children }) => <h3 className="text-white text-lg font-medium mt-5 mb-2">{children}</h3>,
                   p:  ({ children }) => <p className="text-white/65 mb-4 leading-relaxed">{children}</p>,
@@ -184,6 +236,8 @@ export default function BlogPost() {
               <button onClick={() => share('linkedin')} className="text-xs px-3 py-1.5 glass rounded-lg text-white/50 hover:text-white transition-colors">LinkedIn</button>
               <button onClick={() => share('copy')} className="text-xs px-3 py-1.5 glass rounded-lg text-white/50 hover:text-white transition-colors">Copy Link</button>
             </div>
+
+            <AuthorBio />
 
             {/* Comments */}
             <div className="mt-12 space-y-6">

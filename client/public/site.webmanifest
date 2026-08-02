@@ -1,0 +1,27 @@
+{
+  "name": "Danish Raza Bangash — MERN Stack & AI Developer",
+  "short_name": "Danish Raza",
+  "description": "Portfolio and blog of Danish Raza Bangash — MERN stack developer and AI integration specialist in Peshawar, Pakistan.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#030303",
+  "theme_color": "#030303",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["portfolio", "developer", "technology"],
+  "icons": [
+    {
+      "src": "/logo.PNG",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.PNG",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

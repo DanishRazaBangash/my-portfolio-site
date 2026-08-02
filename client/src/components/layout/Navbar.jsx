@@ -89,7 +89,7 @@ export default function Navbar() {
           </button>
           <ThemeToggle />
           <a
-            href="/Danish-Raza-resume.pdf"
+            href="/Danish-Raza-Bangash-Resume.pdf"
             download
             className="px-4 py-1.5 text-sm font-medium bg-white text-black rounded-lg hover:bg-white/90 transition-colors"
           >
@@ -142,7 +142,7 @@ export default function Navbar() {
             )}
             <div className="mt-2 pt-2 border-t border-white/08">
               <a
-                href="/Danish-Raza-resume.pdf"
+                href="/Danish-Raza-Bangash-Resume.pdf"
                 download
                 className="block w-full text-center px-4 py-2.5 text-sm font-medium bg-white text-black rounded-lg hover:bg-white/90 transition-colors"
               >

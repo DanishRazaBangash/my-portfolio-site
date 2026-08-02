@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Search, Tag, Clock, Eye, ArrowRight } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
@@ -7,6 +7,7 @@ import api from '@/lib/api'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import SEOMeta from '@/components/shared/SEOMeta'
+import { FULL_NAME } from '@/lib/seo'
 
 const fmtViews = (n) => n >= 1000 ? `${(n / 1000).toFixed(1)}k` : String(n)
 
@@ -66,8 +67,19 @@ function PostCard({ post, delay }) {
 export default function Blog() {
   const [posts, setPosts]   = useState([])
   const [loading, setLoading] = useState(true)
-  const [query, setQuery]   = useState('')
   const [activeTag, setActiveTag] = useState(null)
+
+  // Search lives in ?q= rather than component state so the WebSite SearchAction
+  // declared in index.html points at a URL that actually works, and so a search
+  // result stays shareable. robots.txt keeps ?q= out of the index.
+  const [searchParams, setSearchParams] = useSearchParams()
+  const query = searchParams.get('q') || ''
+  const setQuery = (value) => {
+    const next = new URLSearchParams(searchParams)
+    if (value) next.set('q', value)
+    else next.delete('q')
+    setSearchParams(next, { replace: true })
+  }
 
   useEffect(() => {
     api.get('/posts?status=published')
@@ -88,8 +100,10 @@ export default function Blog() {
     <>
       <SEOMeta
         title="Blog"
-        description="Thoughts on MERN development, AI integration, RAG pipelines, and building things at scale — by Danish Raza."
+        description={`Thoughts on MERN development, AI integration, RAG pipelines, and building things at scale — by ${FULL_NAME}.`}
         path="/blog"
+        // A filtered view is a slice of the same content, not a page of its own
+        noindex={Boolean(query || activeTag)}
       />
       <Navbar />
       <main className="min-h-screen pt-28 md:pt-10 pb-20 md:pb-32 px-6">
@@ -102,8 +116,13 @@ export default function Blog() {
           >
             <p className="text-xs tracking-widest uppercase text-white/30 mb-3">Writing</p>
             <h1 className="text-3xl sm:text-5xl font-bold text-gradient mb-4">Blog</h1>
-            <p className="text-white/50 text-sm max-w-md">
-              Thoughts on MERN development, AI integration, RAG pipelines, and building things at scale.
+            <p className="text-white/50 text-sm max-w-lg">
+              Thoughts on MERN development, AI integration, RAG pipelines, and building things at
+              scale — written by{' '}
+              <Link to="/" className="text-white/70 hover:text-white underline underline-offset-2 transition-colors">
+                {FULL_NAME}
+              </Link>
+              , a full-stack developer in Peshawar, Pakistan.
             </p>
           </motion.div>
 

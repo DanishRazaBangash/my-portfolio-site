@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { ArrowDown } from 'lucide-react'
 import { GitHubIcon, LinkedInIcon } from '@/components/shared/SocialIcons'
 import SparkleEffect from '@/components/shared/SparkleEffect'
+import { FULL_NAME, PROFILES } from '@/lib/seo'
 
 /* ── Particle canvas ── */
 function ParticleCanvas() {
@@ -90,7 +91,7 @@ function ParticleCanvas() {
 }
 
 /* ── Magnetic button ── */
-function MagneticButton({ children, className, onClick, href, download }) {
+function MagneticButton({ children, className, onClick, href, download, rel, target, ariaLabel }) {
   const ref = useRef(null)
 
   const onMove = useCallback((e) => {
@@ -108,10 +109,11 @@ function MagneticButton({ children, className, onClick, href, download }) {
 
   const props = {
     ref, onMouseMove: onMove, onMouseLeave: onLeave,
+    'aria-label': ariaLabel,
     className: `transition-transform duration-200 ease-out ${className}`,
   }
 
-  if (href) return <a href={href} download={download} {...props}>{children}</a>
+  if (href) return <a href={href} download={download} rel={rel} target={target} {...props}>{children}</a>
   return <button onClick={onClick} {...props}>{children}</button>
 }
 
@@ -142,7 +144,7 @@ function TypingRole() {
   }, [text, deleting, roleIdx, pause])
 
   return (
-    <span className="text-white/70">
+    <span className="text-white/70" aria-hidden>
       {text}
       <span className="inline-block w-0.5 h-5 bg-white/60 ml-0.5 align-middle"
         style={{ animation: 'blink 1s step-end infinite' }} />
@@ -183,27 +185,36 @@ export default function Hero() {
           Available for opportunities · Peshawar, Pakistan
         </motion.div>
 
-        {/* Name */}
+        {/*
+          The page's only H1, and its highest-weight SEO signal. Carries the
+          full name — "Danish Raza Bangash" contains "Danish Raza" as an exact
+          substring, so one heading serves both search queries.
+        */}
         <motion.h1
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-6xl sm:text-7xl md:text-8xl font-bold tracking-tight leading-none mb-4"
+          className="text-[2.75rem] sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[1.05] mb-4"
         >
-          <span className="text-gradient">Danish</span>
+          <span className="text-gradient">Danish Raza</span>
           <br />
-          <span className="text-white/90">Raza</span>
+          <span className="text-white/90">Bangash</span>
         </motion.h1>
 
-        {/* Typing role */}
-        <motion.div
+        {/*
+          H2 carries the role keywords. The typing animation is decorative and
+          aria-hidden; the sr-only span is what crawlers and screen readers read,
+          so the keywords are never dependent on animation state.
+        */}
+        <motion.h2
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.35 }}
-          className="text-lg sm:text-xl font-mono mb-6 h-8 flex items-center justify-center"
+          className="text-lg sm:text-xl font-mono font-normal mb-6 h-8 flex items-center justify-center"
         >
+          <span className="sr-only">MERN Stack Developer &amp; AI Integration Specialist</span>
           <TypingRole />
-        </motion.div>
+        </motion.h2>
 
         {/* Description */}
         <motion.p
@@ -241,13 +252,19 @@ export default function Hero() {
 
           <div className="flex items-center justify-center gap-2">
             <MagneticButton
-              href="https://github.com/danishrazabangash"
+              href={PROFILES.github}
+              target="_blank"
+              rel="me noopener noreferrer"
+              ariaLabel={`${FULL_NAME} on GitHub`}
               className="w-10 h-10 glass glass-hover rounded-xl flex items-center justify-center text-white/60 hover:text-white"
             >
               <GitHubIcon size={16} />
             </MagneticButton>
             <MagneticButton
-              href="https://linkedin.com/in/danish-raza-bangash"
+              href={PROFILES.linkedin}
+              target="_blank"
+              rel="me noopener noreferrer"
+              ariaLabel={`${FULL_NAME} on LinkedIn`}
               className="w-10 h-10 glass glass-hover rounded-xl flex items-center justify-center text-white/60 hover:text-white"
             >
               <LinkedInIcon size={16} />

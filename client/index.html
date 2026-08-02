@@ -4,80 +4,150 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/logo.PNG" />
     <link rel="apple-touch-icon" href="/logo.PNG" />
+    <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#030303" media="(prefers-color-scheme: dark)" />
     <meta name="theme-color" content="#e8e8ec" media="(prefers-color-scheme: light)" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Primary SEO -->
-    <title>Danish Raza — MERN Stack Developer & AI Integration Specialist</title>
-    <meta name="description" content="MERN Stack Developer &amp; AI Integration Specialist, Peshawar. Built BotForge — no-code AI chatbot platform, ~90% RAG accuracy. Ranked 98th percentile HEC." />
-    <meta name="keywords" content="Danish Raza, MERN Stack Developer, AI Integration, RAG Pipeline, React, Node.js, MongoDB, Gemini API, Peshawar Pakistan, Full Stack Developer" />
-    <meta name="author" content="Danish Raza" />
-    <meta name="robots" content="index, follow" />
+    <title>Danish Raza Bangash — MERN Stack &amp; AI Developer, Peshawar</title>
+    <meta name="description" content="MERN stack developer and AI integration specialist in Peshawar, Pakistan. I'm Danish Raza Bangash — I built BotForge, a no-code AI chatbot platform with ~90% RAG accuracy." />
+    <meta name="keywords" content="Danish Raza Bangash, Danish Raza, Danish Bangash, MERN Stack Developer, AI Integration Specialist, RAG Pipeline, React Developer, Node.js Developer, MongoDB, Gemini API, Peshawar, Pakistan, Full Stack Developer" />
+    <meta name="author" content="Danish Raza Bangash" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <link rel="canonical" href="https://danishraza.dev/" />
+    <link rel="alternate" type="application/rss+xml" title="Danish Raza Bangash — Blog" href="https://danishraza.dev/rss.xml" />
 
     <!-- Open Graph -->
-    <meta property="og:type"        content="website" />
-    <meta property="og:url"         content="https://danishraza.dev/" />
-    <meta property="og:title"       content="Danish Raza — MERN Stack Developer & AI Integration Specialist" />
-    <meta property="og:description" content="Full-stack MERN developer with hands-on AI integration experience. Architected BotForge with ~90% RAG retrieval accuracy. Ranked 98th percentile in HEC NSCT." />
-    <meta property="og:image"       content="https://danishraza.dev/og-image.png" />
-    <meta property="og:image:width"  content="1200" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://danishraza.dev/" />
+    <meta property="og:title" content="Danish Raza Bangash — MERN Stack &amp; AI Developer, Peshawar" />
+    <meta property="og:description" content="MERN stack developer and AI integration specialist in Peshawar, Pakistan. I'm Danish Raza Bangash — I built BotForge, a no-code AI chatbot platform with ~90% RAG accuracy." />
+    <meta property="og:image" content="https://danishraza.dev/og-image.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:site_name"   content="Danish Raza" />
-    <meta property="og:locale"      content="en_US" />
+    <meta property="og:image:alt" content="Danish Raza Bangash — MERN Stack Developer and AI Integration Specialist, Peshawar, Pakistan" />
+    <meta property="og:site_name" content="Danish Raza Bangash" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="profile:first_name" content="Danish" />
+    <meta property="profile:last_name" content="Bangash" />
 
     <!-- Twitter / X -->
-    <meta name="twitter:card"        content="summary_large_image" />
-    <meta name="twitter:title"       content="Danish Raza — MERN Stack Developer & AI Integration Specialist" />
-    <meta name="twitter:description" content="Full-stack MERN developer. Architected a no-code AI chatbot platform with ~90% RAG retrieval accuracy." />
-    <meta name="twitter:image"       content="https://danishraza.dev/og-image.png" />
-    <meta name="twitter:creator"     content="@danishrazabangash" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Danish Raza Bangash — MERN Stack &amp; AI Developer, Peshawar" />
+    <meta name="twitter:description" content="MERN stack developer and AI integration specialist. Built BotForge — a no-code AI chatbot platform with ~90% RAG retrieval accuracy." />
+    <meta name="twitter:image" content="https://danishraza.dev/og-image.png" />
+    <meta name="twitter:image:alt" content="Danish Raza Bangash — MERN Stack Developer and AI Integration Specialist" />
 
-    <!-- JSON-LD: Person schema -->
+    <!--
+      Site-wide entity graph. Only nodes that hold true on EVERY route live here —
+      the page-level node (ProfilePage / Blog / BlogPosting) is injected per-route
+      by the server. Everything else references #person by @id rather than
+      repeating the name, so Google resolves "Danish Raza" and "Danish Raza
+      Bangash" to a single entity instead of two competing ones.
+    -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "Person",
-      "name": "Danish Raza",
-      "url": "https://danishraza.dev",
-      "jobTitle": "MERN Stack Developer",
-      "description": "Full-stack MERN developer and AI Integration Specialist based in Peshawar, Pakistan.",
-      "image": "https://danishraza.dev/og-image.png",
-      "sameAs": [
-        "https://github.com/danishrazabangash",
-        "https://linkedin.com/in/danish-raza-bangash"
-      ],
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Peshawar",
-        "addressCountry": "PK"
-      },
-      "knowsAbout": ["React", "Node.js", "MongoDB", "Express", "AI Integration", "RAG Pipelines", "Gemini API"]
+      "@graph": [
+        {
+          "@type": "Person",
+          "@id": "https://danishraza.dev/#person",
+          "name": "Danish Raza Bangash",
+          "alternateName": ["Danish Raza", "Danish Bangash", "Danish R. Bangash"],
+          "givenName": "Danish",
+          "additionalName": "Raza",
+          "familyName": "Bangash",
+          "url": "https://danishraza.dev/",
+          "email": "mailto:danishrazabangash@gmail.com",
+          "description": "Full-stack MERN developer and AI integration specialist based in Peshawar, Pakistan. Architect of BotForge, a no-code AI chatbot platform whose four-tier parallel RAG pipeline reaches ~90% retrieval accuracy at ~780ms latency.",
+          "disambiguatingDescription": "MERN stack developer from Peshawar, Pakistan, also known as Danish Raza.",
+          "jobTitle": ["MERN Stack Developer", "AI Integration Specialist"],
+          "image": {
+            "@type": "ImageObject",
+            "@id": "https://danishraza.dev/#personimage",
+            "url": "https://danishraza.dev/headshot.jpg",
+            "contentUrl": "https://danishraza.dev/headshot.jpg",
+            "width": 800,
+            "height": 800,
+            "caption": "Danish Raza Bangash — MERN Stack Developer and AI Integration Specialist"
+          },
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Peshawar",
+            "addressRegion": "Khyber Pakhtunkhwa",
+            "addressCountry": "PK"
+          },
+          "nationality": { "@type": "Country", "name": "Pakistan" },
+          "alumniOf": {
+            "@type": "CollegeOrUniversity",
+            "name": "University of Peshawar",
+            "sameAs": "https://en.wikipedia.org/wiki/University_of_Peshawar"
+          },
+          "award": [
+            "Ranked in the 98th percentile in the HEC National Skill Competency Test (NSCT)"
+          ],
+          "hasOccupation": {
+            "@type": "Occupation",
+            "name": "Full-Stack Web Developer",
+            "occupationalCategory": "15-1254.00",
+            "skills": "React, Node.js, Express, MongoDB, AI integration, retrieval-augmented generation"
+          },
+          "knowsAbout": [
+            "MERN Stack",
+            "React",
+            "Node.js",
+            "Express.js",
+            "MongoDB",
+            "JavaScript",
+            "AI Integration",
+            "Retrieval-Augmented Generation",
+            "RAG Pipelines",
+            "Google Gemini API",
+            "Vector Embeddings",
+            "REST API Design",
+            "WebSockets",
+            "Socket.IO",
+            "Docker",
+            "Full-Stack Web Development"
+          ],
+          "sameAs": [
+            "https://github.com/danishrazabangash",
+            "https://www.linkedin.com/in/danish-raza-bangash",
+            "https://dev.to/danishrazabangash",
+            "https://www.instagram.com/danish_raza.bangash",
+            "https://www.facebook.com/people/Danish-Raza-Bangash/pfbid023GY2t8Be6rMu64ChrhiaaN6kPN3PrRt9sz1bau1HXN4ffwLX6eTacQHee4V4nah3l/"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://danishraza.dev/#website",
+          "url": "https://danishraza.dev/",
+          "name": "Danish Raza Bangash",
+          "alternateName": ["Danish Raza", "danishraza.dev"],
+          "description": "Portfolio and blog of Danish Raza Bangash — MERN stack developer and AI integration specialist in Peshawar, Pakistan.",
+          "inLanguage": "en",
+          "publisher": { "@id": "https://danishraza.dev/#person" },
+          "copyrightHolder": { "@id": "https://danishraza.dev/#person" },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://danishraza.dev/blog?q={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
+        }
+      ]
     }
     </script>
 
-    <!-- JSON-LD: WebSite schema -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "Danish Raza",
-      "url": "https://danishraza.dev",
-      "description": "Portfolio of Danish Raza — MERN Stack Developer and AI Integration Specialist.",
-      "author": {
-        "@type": "Person",
-        "name": "Danish Raza"
-      }
-    }
-    </script>
-
-    <!-- Inter font — preload avoids render-blocking while display=swap prevents FOUT -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" media="print" onload="this.media='all'" />
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" /></noscript>
+    <!--
+      Inter variable (300–900 in one file), self-hosted so the LCP text paint
+      never waits on a third-party host. @font-face lives in index.css.
+    -->
+    <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
 
     <style>
       /* Pre-paint background to prevent flash on load */
@@ -96,22 +166,33 @@
     </script>
   </head>
   <body>
-    <h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">Danish Raza — MERN Stack Developer &amp; AI Integration Specialist</h1>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
-    <!-- BotForge Chatbot Widget -->
-<script src="https://chatbot-builder-widget.onrender.com/widget.min.js"></script>
-<script>
-  ChatbotWidget.init({
-    chatbotId: '6a3cf7fbd73f94a70d6cb848',
-    apiUrl: 'https://chatbot-builder-api-2v3u.onrender.com/api/v1',
-    name: 'Danish Raza',
-    primaryColor: '#000000',
-    position: 'bottom-right',
-    greeting: 'Hi! Ask me about Danish Raza?',
-    placeholder: 'Type your message...',
-    showTimestamp: true,
-  });
-</script>
+
+    <!--
+      BotForge widget — injected after `load` so a third-party script on a cold
+      Render dyno can never sit on the critical path and drag down LCP/INP.
+    -->
+    <script>
+      window.addEventListener('load', function () {
+        var s = document.createElement('script')
+        s.src = 'https://chatbot-builder-widget.onrender.com/widget.min.js'
+        s.async = true
+        s.onload = function () {
+          if (!window.ChatbotWidget) return
+          window.ChatbotWidget.init({
+            chatbotId: '6a3cf7fbd73f94a70d6cb848',
+            apiUrl: 'https://chatbot-builder-api-2v3u.onrender.com/api/v1',
+            name: 'Danish Raza Bangash',
+            primaryColor: '#000000',
+            position: 'bottom-right',
+            greeting: 'Hi! Ask me about Danish Raza Bangash?',
+            placeholder: 'Type your message...',
+            showTimestamp: true,
+          })
+        }
+        document.body.appendChild(s)
+      })
+    </script>
   </body>
 </html>

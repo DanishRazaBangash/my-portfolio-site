@@ -25,7 +25,9 @@ export default function Home() {
 
   return (
     <>
-      <SEOMeta path="/" />
+      {/* type="profile" mirrors what the server injects, so the tag doesn't
+          flip to "website" once React hydrates over the server's HTML. */}
+      <SEOMeta path="/" type="profile" />
       <Navbar />
       <main>
         <Hero />

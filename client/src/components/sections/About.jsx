@@ -23,10 +23,34 @@ export default function About() {
     <section id="about" className="py-16 md:py-28 px-6">
       <div className="max-w-6xl mx-auto">
         <FadeIn>
-          <p className="text-xs tracking-widest uppercase text-white/30 mb-3">Who I am</p>
-          <h2 className="text-3xl sm:text-4xl font-bold text-gradient mb-10 md:mb-16 max-w-md">
-            About Me
-          </h2>
+          <div className="flex items-center gap-5 sm:gap-6 mb-10 md:mb-16">
+            {/*
+              The only photograph of the site owner on the site. Google leans on
+              a real face image when deciding whether a person entity is
+              Knowledge-Panel-worthy, so the alt text spells out the full name
+              and role rather than something like "profile photo".
+            */}
+            <picture className="shrink-0">
+              <source
+                type="image/webp"
+                srcSet="/headshot-224.webp 224w, /headshot-400.webp 400w, /headshot.webp 800w"
+                sizes="(min-width: 640px) 112px, 88px"
+              />
+              <img
+                src="/headshot.jpg"
+                alt="Danish Raza Bangash — MERN Stack Developer and AI Integration Specialist based in Peshawar, Pakistan"
+                width="112"
+                height="112"
+                loading="lazy"
+                decoding="async"
+                className="w-22 h-22 sm:w-28 sm:h-28 rounded-2xl object-cover ring-1 ring-white/10"
+              />
+            </picture>
+            <div>
+              <p className="text-xs tracking-widest uppercase text-white/30 mb-2">Who I am</p>
+              <h2 className="text-3xl sm:text-4xl font-bold text-gradient">About Me</h2>
+            </div>
+          </div>
         </FadeIn>
 
         {/* On mobile: cards first (order-1), then bio (order-2). On md+: normal left/right. */}
@@ -35,8 +59,15 @@ export default function About() {
           {/* Bio — order-2 on mobile, order-1 on md+ */}
           <div className="space-y-5 order-2 md:order-1">
             <FadeIn delay={0.05}>
+              {/*
+                Opens with the full name in visible body copy. Google weights
+                visible prose far more than markup, and this is the one place a
+                natural first-person introduction can carry the surname without
+                reading like keyword stuffing.
+              */}
               <p className="text-white/70 leading-relaxed text-sm sm:text-base">
-                I'm a final-year Computer Science student at the University of Peshawar (GPA 3.9),
+                I'm <strong className="text-white font-medium">Danish Raza Bangash</strong> — a
+                final-year Computer Science student at the University of Peshawar (GPA 3.9),
                 graduating in 2026. I build full-stack web applications — primarily on the MERN stack —
                 with a focus on AI integration.
               </p>
@@ -63,7 +94,7 @@ export default function About() {
 
             <FadeIn delay={0.2}>
               <a
-                href="/Danish-Raza-resume.pdf"
+                href="/Danish-Raza-Bangash-Resume.pdf"
                 download
                 className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-black text-sm font-medium rounded-xl hover:bg-white/90 transition-colors mt-2"
               >
