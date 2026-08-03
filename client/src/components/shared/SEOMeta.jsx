@@ -16,6 +16,15 @@ const DEFAULT_DESC =
  */
 export default function SEOMeta({
   title,
+  /**
+   * Complete <title>, used verbatim with no " — {name}" suffix appended.
+   *
+   * Google displays the site name on its own line in the result and strips a
+   * trailing "— Site Name" from the title as redundant, which collapsed
+   * "Blog — Danish Raza Bangash" down to just "Blog". Pages that need the name
+   * to survive have to carry it inside the title phrase instead of as a suffix.
+   */
+  exactTitle,
   description = DEFAULT_DESC,
   image,
   path = '/',
@@ -25,9 +34,9 @@ export default function SEOMeta({
   tags = [],
   noindex = false,
 }) {
-  const fullTitle = title
-    ? `${title} — ${FULL_NAME}`
-    : `${FULL_NAME} — MERN Stack & AI Developer, Peshawar`
+  const fullTitle =
+    exactTitle ||
+    (title ? `${title} — ${FULL_NAME}` : `${FULL_NAME} — MERN Stack & AI Developer, Peshawar`)
   const fullUrl = `${BASE_URL}${path}`
   const ogImage = image || OG_IMAGE
   const isArticle = type === 'article'

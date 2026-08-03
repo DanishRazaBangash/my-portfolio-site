@@ -286,7 +286,10 @@ if (isProd) {
 
     } else if (pathname === '/blog') {
       status = 200
-      meta.title       = `Blog — ${SITE}`
+      // Not `Blog — ${SITE}`: Google renders the site name on its own line in the
+      // result and strips a matching trailing suffix, which collapsed this to a
+      // bare "Blog". Keeping the name inside the phrase survives that rewrite.
+      meta.title       = `Blog by ${SITE} — MERN, AI & RAG Engineering`
       meta.description = `Thoughts on MERN development, AI integration, RAG pipelines, and building things at scale — by ${SITE}.`
       meta.extraHead   = ldScript({
         '@context': 'https://schema.org',

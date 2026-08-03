@@ -100,6 +100,8 @@ export default function Blog() {
     <>
       <SEOMeta
         title="Blog"
+        // Name sits inside the phrase, not as a trailing suffix — see exactTitle
+        exactTitle={`Blog by ${FULL_NAME} — MERN, AI & RAG Engineering`}
         description={`Thoughts on MERN development, AI integration, RAG pipelines, and building things at scale — by ${FULL_NAME}.`}
         path="/blog"
         // A filtered view is a slice of the same content, not a page of its own
@@ -115,14 +117,24 @@ export default function Blog() {
             className="mb-12"
           >
             <p className="text-xs tracking-widest uppercase text-white/30 mb-3">Writing</p>
-            <h1 className="text-3xl sm:text-5xl font-bold text-gradient mb-4">Blog</h1>
+            {/*
+              Reads as "Blog by Danish Raza Bangash" to a crawler while still
+              rendering "Blog" as the display word. A bare <h1>Blog</h1> was what
+              Google used to override the title tag in the result.
+            */}
+            <h1 className="text-3xl sm:text-5xl font-bold text-gradient mb-4">
+              Blog
+              <span className="block text-base sm:text-lg font-medium text-white/40 mt-2">
+                by {FULL_NAME}
+              </span>
+            </h1>
             <p className="text-white/50 text-sm max-w-lg">
               Thoughts on MERN development, AI integration, RAG pipelines, and building things at
-              scale — written by{' '}
+              scale — from a full-stack developer in{' '}
               <Link to="/" className="text-white/70 hover:text-white underline underline-offset-2 transition-colors">
-                {FULL_NAME}
+                Peshawar, Pakistan
               </Link>
-              , a full-stack developer in Peshawar, Pakistan.
+              .
             </p>
           </motion.div>
 
