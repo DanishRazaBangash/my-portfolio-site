@@ -28,10 +28,13 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc:  ["'self'"],
-      scriptSrc:   ["'self'", "'unsafe-inline'", 'https://chatbot-builder-widget.onrender.com'],
+      scriptSrc:   ["'self'", "'unsafe-inline'", 'https://chatbot-builder-widget.onrender.com', 'https://botforge.danishraza.dev'],
+      // The BotForge widget wires its buttons up with inline on* attributes,
+      // which helmet's default `script-src-attr 'none'` would block.
+      scriptSrcAttr: ["'unsafe-inline'"],
       styleSrc:    ["'self'", "'unsafe-inline'"],
       imgSrc:      ["'self'", 'data:', 'blob:', 'https:'],
-      connectSrc:  ["'self'", 'https://api.github.com', 'https://github-contributions-api.jogruber.de', 'https://chatbot-builder-widget.onrender.com', 'https://chatbot-builder-api-2v3u.onrender.com'],
+      connectSrc:  ["'self'", 'https://api.github.com', 'https://github-contributions-api.jogruber.de', 'https://chatbot-builder-widget.onrender.com', 'https://chatbot-builder-api-2v3u.onrender.com', 'https://botforge.danishraza.dev'],
       // Inter is self-hosted now — no Google Fonts origins needed
       fontSrc:     ["'self'", 'data:'],
       objectSrc:   ["'none'"],
