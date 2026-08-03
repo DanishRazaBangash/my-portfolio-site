@@ -1,5 +1,5 @@
 import { Mail } from 'lucide-react'
-import { GitHubIcon, LinkedInIcon, DevToIcon, InstagramIcon, FacebookIcon } from '@/components/shared/SocialIcons'
+import { GitHubIcon, LinkedInIcon, DevToIcon, YouTubeIcon, InstagramIcon, FacebookIcon } from '@/components/shared/SocialIcons'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { FULL_NAME, ROLE, LOCATION, EMAIL, PROFILES } from '@/lib/seo'
 
@@ -13,6 +13,7 @@ const socials = [
   { icon: GitHubIcon,    label: 'GitHub',    href: PROFILES.github },
   { icon: LinkedInIcon,  label: 'LinkedIn',  href: PROFILES.linkedin },
   { icon: DevToIcon,     label: 'DEV',       href: PROFILES.devto },
+  { icon: YouTubeIcon,   label: 'YouTube',   href: PROFILES.youtube },
   { icon: InstagramIcon, label: 'Instagram', href: PROFILES.instagram },
   { icon: FacebookIcon,  label: 'Facebook',  href: PROFILES.facebook },
   { icon: Mail,          label: 'Email',     href: `mailto:${EMAIL}` },

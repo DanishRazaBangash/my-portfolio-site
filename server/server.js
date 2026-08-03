@@ -266,17 +266,34 @@ if (isProd) {
             mainEntity: { '@id': PERSON_ID },
             primaryImageOfPage: { '@id': `${DOMAIN}/#personimage` },
           },
-          // The flagship project as its own entity, attributed to the Person.
-          // Gives "BotForge" something to resolve to and adds a second edge into
-          // the same person node.
+          // Shipped products as their own entities, each attributed to the same
+          // Person. Google treats these subdomains as separate sites, so this is
+          // what tells it they belong to one author — the `url` must be the
+          // branded subdomain, not the underlying host it happens to deploy to.
           {
-            '@type': 'SoftwareApplication',
+            '@type': 'WebApplication',
             '@id': `${DOMAIN}/#botforge`,
             name: 'BotForge',
+            alternateName: 'BotForge — AI Chatbot Builder',
             applicationCategory: 'DeveloperApplication',
             operatingSystem: 'Web',
-            url: 'https://chatbot-builder-api-2v3u.onrender.com/',
+            url: 'https://botforge.danishraza.dev/',
+            sameAs: 'https://botforge.danishraza.dev/',
             description: 'A no-code platform for creating, training, and deploying AI chatbots, built on a four-tier parallel RAG pipeline that reaches ~90% retrieval accuracy at ~780ms latency.',
+            author: { '@id': PERSON_ID },
+            creator: { '@id': PERSON_ID },
+            offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+          },
+          {
+            '@type': 'WebApplication',
+            '@id': `${DOMAIN}/#footalyzer`,
+            name: 'Footalyzer',
+            alternateName: 'Footalyzer — AI football briefings, live scores & predictions',
+            applicationCategory: 'SportsApplication',
+            operatingSystem: 'Web',
+            url: 'https://footalyzer.danishraza.dev/',
+            sameAs: 'https://footalyzer.danishraza.dev/',
+            description: 'A football companion delivering AI-generated match briefings, live scores, predictions and private prediction leagues across major competitions.',
             author: { '@id': PERSON_ID },
             creator: { '@id': PERSON_ID },
             offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },

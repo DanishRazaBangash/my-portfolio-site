@@ -41,6 +41,7 @@ export const PROFILES = {
   github: 'https://github.com/danishrazabangash',
   linkedin: 'https://www.linkedin.com/in/danish-raza-bangash',
   devto: 'https://dev.to/danishrazabangash',
+  youtube: 'https://www.youtube.com/@danishrazabangash1',
   instagram: 'https://www.instagram.com/danish_raza.bangash',
   // Canonical www host, not the web.facebook.com variant — the path already
   // carries the full name, which is a bonus signal for the entity.
@@ -48,3 +49,16 @@ export const PROFILES = {
 }
 
 export const SAME_AS = Object.values(PROFILES)
+
+/**
+ * Live project deployments on project subdomains.
+ *
+ * Google treats a subdomain as a largely separate site, so these do not lift
+ * danishraza.dev's own rankings. Their value is that each one is another
+ * indexed property attributed back to the same Person `@id` — and that only
+ * works if the subdomain links home and names the author.
+ */
+export const PROJECTS = {
+  botforge: 'https://botforge.danishraza.dev/',
+  footalyzer: 'https://footalyzer.danishraza.dev/',
+}
