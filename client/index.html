@@ -2,8 +2,19 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/logo.PNG" />
-    <link rel="apple-touch-icon" href="/logo.PNG" />
+    <!--
+      Favicons. The old icon was a white mark on a transparent canvas, which
+      Google composites onto the white result card and renders invisible — hence
+      the generic globe. These tiles bake in the brand-dark background so the
+      mark survives on any surface. Sizes are multiples of 48px per Google's
+      guidance, and /favicon.ico exists because that root path is the fallback
+      Google probes when the <link> tags don't resolve.
+    -->
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#030303" media="(prefers-color-scheme: dark)" />
     <meta name="theme-color" content="#e8e8ec" media="(prefers-color-scheme: light)" />
