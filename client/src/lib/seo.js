@@ -57,8 +57,9 @@ export const SAME_AS = Object.values(PROFILES)
  * danishraza.dev's own rankings. Their value is that each one is another
  * indexed property attributed back to the same Person `@id` — and that only
  * works if the subdomain links home and names the author.
+ *
+ * Defined in lib/projects.js and re-exported here: that module is the catalogue
+ * the server also reads, so the URLs live there and this stays the one import
+ * path components already know.
  */
-export const PROJECTS = {
-  botforge: 'https://botforge.danishraza.dev/',
-  footalyzer: 'https://footalyzer.danishraza.dev/',
-}
+export { PROJECT_URLS as PROJECTS } from './projects.js'

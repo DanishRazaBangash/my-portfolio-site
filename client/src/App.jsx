@@ -14,6 +14,8 @@ import Dock from '@/components/shared/Dock'
 // react-syntax-highlighter (~300 KB) that home-page visitors never need.
 const Home           = lazy(() => import('@/pages/Home'))
 const Blog           = lazy(() => import('@/pages/Blog'))
+const ProjectsPage   = lazy(() => import('@/pages/Projects'))
+const ProjectDetail  = lazy(() => import('@/pages/ProjectDetail'))
 const BlogPost       = lazy(() => import('@/pages/BlogPost'))
 const AdminLogin     = lazy(() => import('@/pages/admin/Login'))
 const AdminDashboard = lazy(() => import('@/pages/admin/Dashboard'))
@@ -57,6 +59,8 @@ function AppInner() {
         <Routes>
           <Route path="/"                element={<Home />} />
           <Route path="/blog"            element={<Blog />} />
+          <Route path="/projects"        element={<ProjectsPage />} />
+          <Route path="/projects/:slug"  element={<ProjectDetail />} />
           <Route path="/blog/:slug"      element={<BlogPost />} />
           <Route path="/admin/login"     element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />

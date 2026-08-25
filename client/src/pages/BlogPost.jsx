@@ -12,39 +12,8 @@ import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import SEOMeta from '@/components/shared/SEOMeta'
 import toast from 'react-hot-toast'
-import { FULL_NAME, ROLE, LOCATION, PROFILES } from '@/lib/seo'
-
-/*
- * Visible authorship. The BlogPosting schema names an author, but Google's
- * quality systems weight a byline a reader can actually see, and it gives every
- * post an internal link back to the homepage entity with the full name as
- * anchor text.
- */
-function AuthorBio() {
-  return (
-    <aside className="glass rounded-2xl p-6 mt-16 mb-4">
-      <p className="text-xs text-white/30 uppercase tracking-widest mb-3">Written by</p>
-      <Link to="/" className="text-white font-semibold text-base hover:text-white/80 transition-colors">
-        {FULL_NAME}
-      </Link>
-      <p className="text-white/50 text-sm mt-1">{ROLE} · {LOCATION}</p>
-      <p className="text-white/60 text-sm leading-relaxed mt-3">
-        Final-year Computer Science student at the University of Peshawar and the architect of
-        BotForge, a no-code AI chatbot platform whose four-tier parallel RAG pipeline reaches
-        ~90% retrieval accuracy.{' '}
-        <Link to="/" state={{ scrollTo: '#about' }} className="text-white/80 underline underline-offset-2 hover:text-white transition-colors">
-          More about me
-        </Link>
-        .
-      </p>
-      <div className="flex items-center gap-3 mt-4 text-xs text-white/40">
-        <a href={PROFILES.github}   target="_blank" rel="me noopener noreferrer" className="hover:text-white transition-colors">GitHub</a>
-        <a href={PROFILES.linkedin} target="_blank" rel="me noopener noreferrer" className="hover:text-white transition-colors">LinkedIn</a>
-        <a href={PROFILES.devto}    target="_blank" rel="me noopener noreferrer" className="hover:text-white transition-colors">DEV</a>
-      </div>
-    </aside>
-  )
-}
+import AuthorBio from '@/components/shared/AuthorBio'
+import { FULL_NAME } from '@/lib/seo'
 
 function CommentForm({ slug }) {
   const [form, setForm] = useState({ name: '', email: '', body: '' })
@@ -94,21 +63,31 @@ function CommentForm({ slug }) {
 
 export default function BlogPost() {
   const { slug } = useParams()
-  const [post, setPost]       = useState(null)
-  const [comments, setComments] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [notFound, setNotFound] = useState(false)
+  /*
+   * One state object tagged with the slug it describes, so `loading` is derived
+   * from "what we hold doesn't match what was asked for" rather than an effect
+   * body toggling it. That also closes a stale-response race: moving between
+   * posts could land an older response after a newer one and render the wrong
+   * article under the right URL.
+   */
+  const [data, setData] = useState({ slug: null, post: null, comments: [], failed: false })
 
   useEffect(() => {
-    setLoading(true)
+    let cancelled = false
     api.get(`/posts/${slug}`)
       .then((r) => {
-        setPost(r.data.post)
-        setComments(r.data.comments || [])
+        if (!cancelled) setData({ slug, post: r.data.post, comments: r.data.comments || [], failed: false })
       })
-      .catch(() => setNotFound(true))
-      .finally(() => setLoading(false))
+      .catch(() => {
+        if (!cancelled) setData({ slug, post: null, comments: [], failed: true })
+      })
+    return () => { cancelled = true }
   }, [slug])
+
+  const loading  = data.slug !== slug
+  const notFound = !loading && data.failed
+  const post     = data.post
+  const comments = data.comments
 
   const share = (platform) => {
     const url = window.location.href
@@ -195,7 +174,9 @@ export default function BlogPost() {
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 components={{
-                  code({ node, inline, className, children, ...props }) {
+                  // `node` is destructured only to keep it out of ...props —
+                  // spreading it onto a DOM element triggers an unknown-prop warning.
+                  code({ node: _node, inline, className, children, ...props }) {
                     const match = /language-(\w+)/.exec(className || '')
                     return !inline && match ? (
                       <SyntaxHighlighter
