@@ -70,27 +70,30 @@ export default function Dock() {
   const { theme, toggle } = useTheme()
   const mouseX = useMotionValue(Infinity)
 
-  if (location.pathname.startsWith('/admin')) return null
-
-  // Track which section is scrolled into view (home page only)
-  const [activeSection, setActiveSection] = useState(null)
+  /*
+   * Which section is scrolled into view, stored together with the route it was
+   * observed on. Deriving `activeSection` from that pairing means a route
+   * change clears the highlight for free, instead of an effect body calling
+   * setState synchronously to reset it.
+   */
+  const [spy, setSpy] = useState({ path: null, section: null })
+  const activeSection = spy.path === location.pathname ? spy.section : null
 
   useEffect(() => {
-    if (location.pathname !== '/') { setActiveSection(null); return }
+    if (location.pathname !== '/') return
 
     window.scrollTo(0, 0)
-    setActiveSection(null)
 
     // Defer observer setup to the next macrotask so the scroll has been
     // committed to layout before the initial intersection check fires
     let observers = []
     const timerId = setTimeout(() => {
-      const ids = ['#about', '#skills', '#projects', '#contact']
+      const ids = ['#about', '#skills', '#contact']
       observers = ids.flatMap((id) => {
         const el = document.querySelector(id)
         if (!el) return []
         const obs = new IntersectionObserver(
-          ([entry]) => { if (entry.isIntersecting) setActiveSection(id) },
+          ([entry]) => { if (entry.isIntersecting) setSpy({ path: '/', section: id }) },
           { rootMargin: '-35% 0px -55% 0px', threshold: 0 },
         )
         obs.observe(el)
@@ -103,6 +106,17 @@ export default function Dock() {
       observers.forEach((obs) => obs.disconnect())
     }
   }, [location.pathname])
+
+  /*
+   * Bail out AFTER every hook has run, never before.
+   *
+   * This early return used to sit above the useState/useEffect above it, so
+   * a client-side transition into /admin rendered the component with fewer
+   * hooks than the previous render — React error #300, which unmounted the
+   * entire app to a blank page. Reachable by opening /admin, navigating away,
+   * and pressing Back.
+   */
+  if (location.pathname.startsWith('/admin')) return null
 
   const scrollTo = (id) => {
     if (location.pathname !== '/') {
@@ -121,6 +135,7 @@ export default function Dock() {
 
   const isHome = location.pathname === '/'
   const isBlog = location.pathname.startsWith('/blog')
+  const isProjects = location.pathname.startsWith('/projects')
   const isDark = theme === 'dark'
   const sz = 24
 
@@ -154,11 +169,11 @@ export default function Dock() {
         className="hidden md:flex items-end gap-2 px-4 py-3 rounded-2xl pointer-events-auto dock-border"
         style={panelStyle}
       >
-        <DockItem mouseX={mouseX} icon={<Home size={sz} />}         label="Home"     onClick={() => { if (isHome) { setActiveSection(null); window.scrollTo({ top: 0, behavior: 'smooth' }) } else { navigate('/') } }} isActive={isHome && !activeSection} />
+        <DockItem mouseX={mouseX} icon={<Home size={sz} />}         label="Home"     onClick={() => { if (isHome) { setSpy({ path: '/', section: null }); window.scrollTo({ top: 0, behavior: 'smooth' }) } else { navigate('/') } }} isActive={isHome && !activeSection} />
         <Separator />
         <DockItem mouseX={mouseX} icon={<User size={sz} />}         label="About"    onClick={() => scrollTo('#about')}    isActive={isHome && activeSection === '#about'} />
         <DockItem mouseX={mouseX} icon={<Zap size={sz} />}          label="Skills"   onClick={() => scrollTo('#skills')}   isActive={isHome && activeSection === '#skills'} />
-        <DockItem mouseX={mouseX} icon={<LayoutGrid size={sz} />}   label="Projects" onClick={() => scrollTo('#projects')} isActive={isHome && activeSection === '#projects'} />
+        <DockItem mouseX={mouseX} icon={<LayoutGrid size={sz} />}   label="Projects" onClick={() => navigate('/projects')} isActive={isProjects} />
         <DockItem mouseX={mouseX} icon={<BookOpen size={sz} />}     label="Blog"     onClick={() => navigate('/blog')}     isActive={isBlog} />
         <DockItem mouseX={mouseX} icon={<Mail size={sz} />}         label="Contact"  onClick={() => scrollTo('#contact')}  isActive={isHome && activeSection === '#contact'} />
         <Separator />

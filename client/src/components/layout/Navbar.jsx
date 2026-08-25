@@ -4,11 +4,14 @@ import { Menu, X, Command } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import ThemeToggle from '@/components/shared/ThemeToggle'
 
+// isRoute marks a real page rather than a section anchor on the home page.
+// Previously this was inferred with href.startsWith('/blog'), which only held
+// while /blog was the single non-anchor destination.
 const navLinks = [
   { label: 'About',    href: '/#about' },
   { label: 'Skills',   href: '/#skills' },
-  { label: 'Projects', href: '/#projects' },
-  { label: 'Blog',     href: '/blog' },
+  { label: 'Projects', href: '/projects', isRoute: true },
+  { label: 'Blog',     href: '/blog',     isRoute: true },
   { label: 'Contact',  href: '/#contact' },
 ]
 
@@ -58,7 +61,7 @@ export default function Navbar() {
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-1">
           {navLinks.map((l) =>
-            l.href.startsWith('/blog') ? (
+            l.isRoute ? (
               <Link
                 key={l.href}
                 to={l.href}
@@ -121,7 +124,7 @@ export default function Navbar() {
             className="md:hidden mx-4 mt-2 glass rounded-2xl p-4 flex flex-col gap-1"
           >
             {navLinks.map((l) =>
-              l.href.startsWith('/blog') ? (
+              l.isRoute ? (
                 <Link
                   key={l.href}
                   to={l.href}

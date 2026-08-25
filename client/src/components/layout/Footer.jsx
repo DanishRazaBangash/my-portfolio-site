@@ -42,7 +42,7 @@ export default function Footer() {
 
         <nav className="flex items-center gap-4 text-xs text-white/40">
           <button onClick={() => scrollTo('#about')}    className="hover:text-white transition-colors">About</button>
-          <button onClick={() => scrollTo('#projects')} className="hover:text-white transition-colors">Projects</button>
+          <Link to="/projects"                          className="hover:text-white transition-colors">Projects</Link>
           <Link to="/blog"                              className="hover:text-white transition-colors">Blog</Link>
           <button onClick={() => scrollTo('#contact')}  className="hover:text-white transition-colors">Contact</button>
         </nav>

@@ -1,14 +1,25 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Search, Home, User, Briefcase, BookOpen, Mail, ExternalLink } from 'lucide-react'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { Search, Home, User, Briefcase, BookOpen, Mail, ExternalLink, LayoutGrid } from 'lucide-react'
+import { PROJECTS_LIST } from '@/lib/projects'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const commands = [
   { id: 'home',     label: 'Home',          icon: Home,        action: 'scroll', target: '#hero' },
   { id: 'about',    label: 'About',         icon: User,        action: 'scroll', target: '#about' },
-  { id: 'projects', label: 'Projects',      icon: Briefcase,   action: 'scroll', target: '#projects' },
+  { id: 'projects', label: 'Projects',      icon: Briefcase,   action: 'route',  target: '/projects' },
   { id: 'blog',     label: 'Blog',          icon: BookOpen,    action: 'route',  target: '/blog' },
   { id: 'contact',  label: 'Contact',       icon: Mail,        action: 'scroll', target: '#contact' },
+  // Every project is reachable by name, so Ctrl+K jumps straight to one
+  // instead of stopping at the index page.
+  ...PROJECTS_LIST.map((p) => ({
+    id: `project-${p.slug}`,
+    label: p.name,
+    hint: p.tagline,
+    icon: LayoutGrid,
+    action: 'route',
+    target: `/projects/${p.slug}`,
+  })),
   { id: 'github',   label: 'GitHub →',      icon: ExternalLink, action: 'link', target: 'https://github.com/danishrazabangash' },
   { id: 'linkedin', label: 'LinkedIn →',    icon: ExternalLink, action: 'link', target: 'https://linkedin.com/in/danish-raza-bangash' },
 ]
@@ -16,12 +27,20 @@ const commands = [
 export default function CommandPalette() {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
-  const [selected, setSelected] = useState(0)
+  /*
+   * The highlighted row, stored with the query it belongs to. Deriving
+   * `selected` from that pairing resets the cursor whenever the query changes,
+   * without an effect that fires a setState on every keystroke.
+   */
+  const [cursor, setCursor] = useState({ query: '', index: 0 })
   const navigate = useNavigate()
+  const location = useLocation()
 
   const filtered = query
-    ? commands.filter((c) => c.label.toLowerCase().includes(query.toLowerCase()))
+    ? commands.filter((c) => `${c.label} ${c.hint || ''}`.toLowerCase().includes(query.toLowerCase()))
     : commands
+
+  const selected = cursor.query === query ? cursor.index : 0
 
   useEffect(() => {
     const down = (e) => {
@@ -35,13 +54,19 @@ export default function CommandPalette() {
     return () => window.removeEventListener('keydown', down)
   }, [])
 
-  useEffect(() => { setSelected(0) }, [query])
-
   const run = (cmd) => {
     setOpen(false)
     setQuery('')
     if (cmd.action === 'scroll') {
-      document.querySelector(cmd.target)?.scrollIntoView({ behavior: 'smooth' })
+      // These targets are sections of the home page. Off the home page the
+      // element simply isn't in the document, so the command used to do
+      // nothing at all — now it routes home and scrolls on arrival, matching
+      // what the Navbar, Dock and Footer already do.
+      if (location.pathname !== '/') {
+        navigate('/', { state: { scrollTo: cmd.target } })
+      } else {
+        document.querySelector(cmd.target)?.scrollIntoView({ behavior: 'smooth' })
+      }
     } else if (cmd.action === 'route') {
       navigate(cmd.target)
     } else if (cmd.action === 'link') {
@@ -49,9 +74,12 @@ export default function CommandPalette() {
     }
   }
 
+  const move = (delta) =>
+    setCursor({ query, index: Math.max(0, Math.min(selected + delta, filtered.length - 1)) })
+
   const onKey = (e) => {
-    if (e.key === 'ArrowDown') { e.preventDefault(); setSelected((s) => Math.min(s + 1, filtered.length - 1)) }
-    if (e.key === 'ArrowUp')   { e.preventDefault(); setSelected((s) => Math.max(s - 1, 0)) }
+    if (e.key === 'ArrowDown') { e.preventDefault(); move(1) }
+    if (e.key === 'ArrowUp')   { e.preventDefault(); move(-1) }
     if (e.key === 'Enter' && filtered[selected]) run(filtered[selected])
   }
 
@@ -98,7 +126,12 @@ export default function CommandPalette() {
                       }`}
                     >
                       <cmd.icon size={15} className="shrink-0" />
-                      {cmd.label}
+                      <span className="truncate">{cmd.label}</span>
+                      {cmd.hint && (
+                        <span className="ml-auto pl-3 text-xs text-white/25 truncate hidden sm:block">
+                          {cmd.hint}
+                        </span>
+                      )}
                     </button>
                   ))}
                 </div>
