@@ -13,6 +13,13 @@ import postRoutes    from './routes/posts.js'
 import commentRoutes from './routes/comments.js'
 import contactRoutes from './routes/contact.js'
 import Post from './models/Post.js'
+/*
+ * The project catalogue is a static module rather than a collection, so these
+ * routes resolve with no database round-trip: no transient 503, and no reliance
+ * on Googlebot being allowed to fetch /api in order to render the page.
+ */
+import { PROJECTS_LIST, getProject } from '../client/src/lib/projects.js'
+import { projectsIndexGraph, projectDetailGraph, allProjectNodes } from '../client/src/lib/projectSchema.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname  = dirname(__filename)
@@ -74,8 +81,12 @@ const SITE      = 'Danish Raza Bangash'
 const PERSON_ID = `${DOMAIN}/#person`
 const SITE_ID   = `${DOMAIN}/#website`
 const DEF_TITLE = `${SITE} — MERN Stack & AI Developer, Peshawar`
-const DEF_DESC  = "MERN stack developer and AI integration specialist in Peshawar, Pakistan. I'm Danish Raza Bangash — I built BotForge, a no-code AI chatbot platform with ~90% RAG accuracy."
+const DEF_DESC  = "MERN stack developer and AI integration specialist in Peshawar, Pakistan. I'm Danish Raza Bangash — I built BotForge, a no-code AI chatbot platform with 91.7% RAG accuracy."
 const DEF_IMG   = `${DOMAIN}/og-image.png`
+
+/* Passed to the shared builders in client/src/lib/projectSchema.js so the
+ * server-injected graph and the one React re-emits use identical @ids. */
+const SCHEMA_IDS = { domain: DOMAIN, personId: PERSON_ID, siteId: SITE_ID }
 
 // Escape special HTML characters so injected values can't break the document
 function escHtml(s) {
@@ -90,7 +101,7 @@ function escHtml(s) {
 // The regexes are deliberately simple because we control the template format.
 function injectMeta(template, { title, description, url, image, ogType, extraHead = '', noindex = false }) {
   let html = template
-    .replace(/(<title>)[^<]*(<\/title>)/,                                  `$1${escHtml(title)}$2`)
+    .replace(/(<title[^>]*>)[^<]*(<\/title>)/,                              `$1${escHtml(title)}$2`)
     .replace(/(<meta\s+name="description"\s+content=")[^"]*(")/,           `$1${escHtml(description)}$2`)
     .replace(/(<link\s+rel="canonical"\s+href=")[^"]*(")/,                 `$1${url}$2`)
     .replace(/(<meta\s+property="og:url"\s+content=")[^"]*(")/,            `$1${url}$2`)
@@ -126,6 +137,20 @@ function injectMeta(template, { title, description, url, image, ogType, extraHea
 
 const ldScript = (obj) => `<script type="application/ld+json">${JSON.stringify(obj)}</script>`
 
+/* Projects are file-backed, so their sitemap entries need no database — which
+ * is what lets the handler below still answer if the post query fails. */
+const projectSitemapEntries = () => {
+  const latest = PROJECTS_LIST.reduce((acc, p) => (p.updated > acc ? p.updated : acc), PROJECTS_LIST[0].updated)
+  return [
+    `  <url><loc>${DOMAIN}/projects</loc><lastmod>${latest}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>`,
+    ...PROJECTS_LIST.map((p) =>
+      `  <url><loc>${DOMAIN}/projects/${p.slug}</loc><lastmod>${p.updated}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>`),
+  ]
+}
+
+const sitemapXml = (entries) =>
+  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${entries.join('\n')}\n</urlset>`
+
 app.get('/sitemap.xml', async (req, res) => {
   try {
     const posts = await Post.find({ status: 'published' }).select('slug updatedAt').lean()
@@ -145,13 +170,20 @@ app.get('/sitemap.xml', async (req, res) => {
     const postEntries = posts.map((p) =>
       `  <url><loc>${DOMAIN}/blog/${p.slug}</loc><lastmod>${new Date(p.updatedAt).toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>`,
     )
-    const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${[...staticEntries, ...postEntries].join('\n')}\n</urlset>`
     res.setHeader('Content-Type', 'application/xml')
     res.setHeader('Cache-Control', 'public, max-age=3600')
-    res.send(xml)
+    res.send(sitemapXml([...staticEntries, ...projectSitemapEntries(), ...postEntries]))
   } catch (err) {
     console.error('Sitemap error:', err)
-    res.status(500).send('Error generating sitemap')
+    // A sitemap missing only its blog posts is far better than a 500, which
+    // tells Google nothing about the site at all — and none of the entries
+    // below needed the database in the first place.
+    const day = new Date().toISOString().split('T')[0]
+    res.setHeader('Content-Type', 'application/xml')
+    res.status(200).send(sitemapXml([
+      `  <url><loc>${DOMAIN}/</loc><lastmod>${day}</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>`,
+      ...projectSitemapEntries(),
+    ]))
   }
 })
 
@@ -229,8 +261,15 @@ if (isProd) {
   })
 
   // { index: false } prevents express.static from serving index.html for '/'
-  // so our smart catch-all below handles every HTML request instead
-  app.use(express.static(distPath, { index: false }))
+  // so our smart catch-all below handles every HTML request instead.
+  //
+  // { redirect: false } matters just as much: the project screenshots live in
+  // public/projects/, so a real directory now exists at the same path as the
+  // /projects route. Left on, express.static answers /projects with a 301 to
+  // /projects/, which the canonical-trailing-slash rule above bounces straight
+  // back — an infinite redirect loop that never reaches the SPA. With it off,
+  // only actual files are served and /projects falls through to the catch-all.
+  app.use(express.static(distPath, { index: false, redirect: false }))
 
   app.get('*', async (req, res) => {
     const pathname = req.path
@@ -269,38 +308,17 @@ if (isProd) {
             mainEntity: { '@id': PERSON_ID },
             primaryImageOfPage: { '@id': `${DOMAIN}/#personimage` },
           },
-          // Shipped products as their own entities, each attributed to the same
-          // Person. Google treats these subdomains as separate sites, so this is
-          // what tells it they belong to one author — the `url` must be the
-          // branded subdomain, not the underlying host it happens to deploy to.
-          {
-            '@type': 'WebApplication',
-            '@id': `${DOMAIN}/#botforge`,
-            name: 'BotForge',
-            alternateName: 'BotForge — AI Chatbot Builder',
-            applicationCategory: 'DeveloperApplication',
-            operatingSystem: 'Web',
-            url: 'https://botforge.danishraza.dev/',
-            sameAs: 'https://botforge.danishraza.dev/',
-            description: 'A no-code platform for creating, training, and deploying AI chatbots, built on a four-tier parallel RAG pipeline that reaches ~90% retrieval accuracy at ~780ms latency.',
-            author: { '@id': PERSON_ID },
-            creator: { '@id': PERSON_ID },
-            offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-          },
-          {
-            '@type': 'WebApplication',
-            '@id': `${DOMAIN}/#footalyzer`,
-            name: 'Footalyzer',
-            alternateName: 'Footalyzer — AI football briefings, live scores & predictions',
-            applicationCategory: 'SportsApplication',
-            operatingSystem: 'Web',
-            url: 'https://footalyzer.danishraza.dev/',
-            sameAs: 'https://footalyzer.danishraza.dev/',
-            description: 'A football companion delivering AI-generated match briefings, live scores, predictions and private prediction leagues across major competitions.',
-            author: { '@id': PERSON_ID },
-            creator: { '@id': PERSON_ID },
-            offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-          },
+          /*
+           * Every shipped product as its own entity, all attributed to the same
+           * Person. Google treats these project subdomains as separate sites, so
+           * this is what tells it they share one author — and the `url` must be
+           * the branded subdomain, not the host it happens to deploy to.
+           *
+           * The canonical definition of each lives on its own /projects/:slug
+           * page; these carry the same @id with the identifying subset, so the
+           * two mentions merge rather than compete.
+           */
+          ...allProjectNodes(SCHEMA_IDS),
         ],
       })
 
@@ -335,6 +353,37 @@ if (isProd) {
           },
         ],
       })
+
+    } else if (pathname === '/projects') {
+      status = 200
+      // Name sits inside the phrase rather than as a trailing suffix — Google
+      // strips a matching "— Site Name" tail, which is what collapsed /blog's
+      // title down to a bare "Blog".
+      meta.title       = `Projects by ${SITE} — AI, RAG & Full-Stack Builds`
+      // Under ~160 chars so Google renders it whole. client/src/pages/Projects.jsx
+      // states this verbatim — the two copies must not drift.
+      meta.description = `Four shipped products by ${SITE} — an AI chatbot platform, an AI football companion, a 21-tool developer toolbox and an AI-agent ticketing app.`
+      meta.extraHead   = ldScript(projectsIndexGraph({
+        ...SCHEMA_IDS,
+        title: meta.title,
+        description: meta.description,
+      }))
+
+    } else if (pathname.startsWith('/projects/')) {
+      // Static catalogue: an unknown slug is knowable immediately, so it falls
+      // through to the genuine 404 below instead of a soft 200.
+      const project = getProject(pathname.slice('/projects/'.length))
+      if (project) {
+        status = 200
+        // Deliberately no "— Danish Raza Bangash" suffix. These titles already
+        // run 45–58 characters; appending the site name pushes them past the
+        // ~60 Google will render, and it prints the site name on its own line
+        // anyway. SEOMeta's exactTitle for this route must match.
+        meta.title       = `${project.name} — ${project.tagline}`
+        meta.description = project.description
+        meta.image       = `${DOMAIN}${project.screenshot}`
+        meta.extraHead   = ldScript(projectDetailGraph(project.slug, SCHEMA_IDS))
+      }
 
     } else if (pathname.startsWith('/admin')) {
       // Never index the admin surface, regardless of what robots.txt says —

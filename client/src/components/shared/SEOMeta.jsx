@@ -1,9 +1,10 @@
+import { useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { BASE_URL, FULL_NAME, OG_IMAGE, PERSON_ID, WEBSITE_ID } from '@/lib/seo'
 
 const DEFAULT_DESC =
   'MERN stack developer and AI integration specialist in Peshawar, Pakistan. ' +
-  "I'm Danish Raza Bangash — I built BotForge, a no-code AI chatbot platform with ~90% RAG accuracy."
+  "I'm Danish Raza Bangash — I built BotForge, a no-code AI chatbot platform with 91.7% RAG accuracy."
 
 /**
  * Client-side head management for SPA navigations.
@@ -33,6 +34,13 @@ export default function SEOMeta({
   updatedAt,
   tags = [],
   noindex = false,
+  /**
+   * Prebuilt JSON-LD graph, rendered verbatim. Project pages pass the graph
+   * from lib/projectSchema.js — the same builder server.js uses — so the copy
+   * React emits after a client-side navigation carries @ids identical to the
+   * server-injected one and merges with it rather than competing.
+   */
+  graph,
 }) {
   const fullTitle =
     exactTitle ||
@@ -40,6 +48,7 @@ export default function SEOMeta({
   const fullUrl = `${BASE_URL}${path}`
   const ogImage = image || OG_IMAGE
   const isArticle = type === 'article'
+  const imageAlt = title ? `${title} — ${FULL_NAME}` : FULL_NAME
 
   const articleGraph = isArticle
     ? JSON.stringify({
@@ -76,37 +85,84 @@ export default function SEOMeta({
       })
     : null
 
+  /*
+   * Singleton head tags are synced in place rather than rendered.
+   *
+   * index.html ships a full set of these, and server.js rewrites them per route
+   * — that copy is what crawlers and social scrapers read, since neither runs
+   * our JavaScript. Rendering the same tags through Helmet as well produced a
+   * SECOND copy of each: React 19 makes react-helmet-async take its
+   * React19Dispatcher path, which emits plain <meta>/<link> elements and leans
+   * on React's native metadata hoisting, so the tag-reconciling code that would
+   * have replaced the originals never runs. Two <link rel="canonical"> is not a
+   * tie-break Google resolves — it discards both.
+   *
+   * Updating the existing nodes keeps exactly one of each, correct on first
+   * paint (the server already set it) and correct after a client-side
+   * navigation (this effect rewrites it).
+   */
+  useEffect(() => {
+    const head = document.head
+
+    const sync = (selector, create, attr, value) => {
+      if (value == null) return
+      let el = head.querySelector(selector)
+      if (!el) {
+        el = create()
+        head.appendChild(el)
+      }
+      el.setAttribute(attr, value)
+    }
+    const meta = (key, kind, value) =>
+      sync(`meta[${kind}="${key}"]`, () => {
+        const el = document.createElement('meta')
+        el.setAttribute(kind, key)
+        return el
+      }, 'content', value)
+
+    document.title = fullTitle
+
+    meta('description', 'name', description)
+    meta('author', 'name', FULL_NAME)
+    meta('robots', 'name',
+      noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1')
+
+    sync('link[rel="canonical"]', () => {
+      const el = document.createElement('link')
+      el.setAttribute('rel', 'canonical')
+      return el
+    }, 'href', fullUrl)
+
+    meta('og:type', 'property', type)
+    meta('og:url', 'property', fullUrl)
+    meta('og:title', 'property', fullTitle)
+    meta('og:description', 'property', description)
+    meta('og:image', 'property', ogImage)
+    meta('og:image:alt', 'property', imageAlt)
+    meta('og:site_name', 'property', FULL_NAME)
+    meta('og:locale', 'property', 'en_US')
+
+    meta('twitter:card', 'name', 'summary_large_image')
+    meta('twitter:title', 'name', fullTitle)
+    meta('twitter:description', 'name', description)
+    meta('twitter:image', 'name', ogImage)
+    meta('twitter:image:alt', 'name', imageAlt)
+  }, [fullTitle, description, fullUrl, ogImage, imageAlt, type, noindex])
+
+  /*
+   * Only additive tags still go through Helmet. Article/graph JSON-LD may
+   * legitimately appear twice — matching @ids merge into one entity — and the
+   * article:* properties have no static counterpart to overwrite.
+   */
   return (
     <Helmet>
-      <title>{fullTitle}</title>
-      <meta name="description" content={description} />
-      <meta name="author" content={FULL_NAME} />
-      <meta
-        name="robots"
-        content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1'}
-      />
-      <link rel="canonical" href={fullUrl} />
-
-      <meta property="og:type" content={type} />
-      <meta property="og:url" content={fullUrl} />
-      <meta property="og:title" content={fullTitle} />
-      <meta property="og:description" content={description} />
-      <meta property="og:image" content={ogImage} />
-      <meta property="og:image:alt" content={title ? `${title} — ${FULL_NAME}` : FULL_NAME} />
-      <meta property="og:site_name" content={FULL_NAME} />
-      <meta property="og:locale" content="en_US" />
       {isArticle && publishedAt && <meta property="article:published_time" content={publishedAt} />}
       {isArticle && updatedAt && <meta property="article:modified_time" content={updatedAt} />}
       {isArticle && <meta property="article:author" content={`${BASE_URL}/#person`} />}
       {isArticle && tags.map((tag) => <meta key={tag} property="article:tag" content={tag} />)}
 
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={fullTitle} />
-      <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={ogImage} />
-      <meta name="twitter:image:alt" content={title ? `${title} — ${FULL_NAME}` : FULL_NAME} />
-
       {isArticle && <script type="application/ld+json">{articleGraph}</script>}
+      {graph && <script type="application/ld+json">{JSON.stringify(graph)}</script>}
     </Helmet>
   )
 }

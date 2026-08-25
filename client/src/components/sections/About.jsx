@@ -158,7 +158,7 @@ export default function About() {
                 <p className="text-white/70 leading-relaxed text-sm sm:text-base">
                   My flagship project, <span className="text-white font-medium">BotForge</span>, is a
                   production-grade no-code chatbot platform featuring a custom four-tier parallel RAG
-                  pipeline that achieves ~90% retrieval accuracy using Gemini embeddings, MongoDB
+                  pipeline that achieves 91.7% retrieval accuracy using Gemini embeddings, MongoDB
                   full-text search, regex matching, and fuzzy scoring — all merged with weighted
                   ranking at ~780ms latency.
                 </p>

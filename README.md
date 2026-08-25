@@ -10,7 +10,7 @@ My personal portfolio website. Built with the MERN stack and deployed on Render.
 
 I'm a final-year Computer Science student at the University of Peshawar (GPA 3.9), graduating in 2026. I build full-stack web apps with a focus on AI integration.
 
-My flagship project, **BotForge**, is a no-code chatbot platform with a custom four-tier parallel RAG pipeline — achieving ~90% retrieval accuracy at ~780ms latency using Gemini embeddings, MongoDB full-text search, regex, and fuzzy matching.
+My flagship project, **BotForge**, is a no-code chatbot platform with a custom four-tier parallel RAG pipeline — achieving 91.7% retrieval accuracy at ~780ms latency using Gemini embeddings, MongoDB full-text search, regex, and fuzzy matching.
 
 I'm ranked in the 98th percentile in the HEC National Skill Competency Test and currently looking to join a product-focused startup or AI team.
 

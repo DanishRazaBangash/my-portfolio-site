@@ -131,15 +131,31 @@ function TypingRole() {
   const [deleting, setDeleting] = useState(false)
   const [pause, setPause] = useState(false)
 
+  /*
+   * Every transition is scheduled rather than applied inline. The state changes
+   * that end a word used to run synchronously in the effect body, which forces
+   * a cascading re-render; a zero-delay timer defers them by one tick instead,
+   * with no visible difference to the animation.
+   */
   useEffect(() => {
-    if (pause) { const t = setTimeout(() => setPause(false), 1400); return () => clearTimeout(t) }
     const full = roles[roleIdx]
-    if (!deleting && text === full) { setPause(true); setDeleting(true); return }
-    if (deleting && text === '') { setDeleting(false); setRoleIdx((i) => (i + 1) % roles.length); return }
-    const speed = deleting ? 40 : 70
-    const t = setTimeout(() => {
-      setText(deleting ? full.slice(0, text.length - 1) : full.slice(0, text.length + 1))
-    }, speed)
+    let delay, step
+
+    if (pause) {
+      delay = 1400
+      step = () => setPause(false)
+    } else if (!deleting && text === full) {
+      delay = 0
+      step = () => { setPause(true); setDeleting(true) }
+    } else if (deleting && text === '') {
+      delay = 0
+      step = () => { setDeleting(false); setRoleIdx((i) => (i + 1) % roles.length) }
+    } else {
+      delay = deleting ? 40 : 70
+      step = () => setText(deleting ? full.slice(0, text.length - 1) : full.slice(0, text.length + 1))
+    }
+
+    const t = setTimeout(step, delay)
     return () => clearTimeout(t)
   }, [text, deleting, roleIdx, pause])
 
@@ -224,7 +240,7 @@ export default function Hero() {
           className="text-white/50 max-w-xl mx-auto text-sm sm:text-base leading-relaxed mb-10 hidden sm:block"
         >
           Building production-grade AI-integrated web apps. Architected a no-code chatbot platform
-          with a four-tier parallel RAG pipeline achieving ~90% retrieval accuracy. Ranked in the
+          with a four-tier parallel RAG pipeline achieving 91.7% retrieval accuracy. Ranked in the
           98th percentile in the HEC National Skill Competency Test.
         </motion.p>
 
