@@ -15,10 +15,16 @@ function createSparkle() {
 
 export default function SparkleEffect({ count = 8, className = '' }) {
   const containerRef = useRef(null)
+  const liveRef = useRef(0)
 
   const addSparkle = useCallback(() => {
     const container = containerRef.current
     if (!container) return
+
+    // `count` caps how many sparkles are alive at once. It was accepted and
+    // then never read, so Hero's count={4} did nothing and the interval
+    // spawned without any bound at all.
+    if (liveRef.current >= count) return
 
     /* Read CSS variable so sparkle colour matches current theme */
     const fill = getComputedStyle(document.documentElement)
@@ -41,8 +47,12 @@ export default function SparkleEffect({ count = 8, className = '' }) {
     </svg>`
 
     container.appendChild(el)
-    setTimeout(() => el.remove(), sparkle.duration + sparkle.delay + 100)
-  }, [])
+    liveRef.current += 1
+    setTimeout(() => {
+      el.remove()
+      liveRef.current -= 1
+    }, sparkle.duration + sparkle.delay + 100)
+  }, [count])
 
   useEffect(() => {
     const interval = setInterval(addSparkle, 300)

@@ -89,11 +89,17 @@ function PostsTab() {
   const [editing, setEditing] = useState(null)
   const [creating, setCreating] = useState(false)
 
+  const fetchPosts = () =>
+    api.get('/posts').then((r) => setPosts(r.data.posts || [])).finally(() => setLoading(false))
+
+  // `load` is the manual refresh used after a mutation; it shows the spinner
+  // again. The mount effect skips that, since loading already starts true and
+  // setting it synchronously in an effect body just forces an extra render.
   const load = () => {
     setLoading(true)
-    api.get('/posts').then((r) => setPosts(r.data.posts || [])).finally(() => setLoading(false))
+    fetchPosts()
   }
-  useEffect(load, [])
+  useEffect(() => { fetchPosts() }, [])
 
   const del = async (id) => {
     if (!confirm('Delete this post?')) return
