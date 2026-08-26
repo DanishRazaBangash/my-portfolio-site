@@ -5,6 +5,7 @@ import { useTheme } from '@/store/useTheme'
 import { useEasterEgg } from '@/hooks/useEasterEgg'
 import CustomCursor from '@/components/shared/CustomCursor'
 import ScrollProgress from '@/components/shared/ScrollProgress'
+import ScrollToTop from '@/components/shared/ScrollToTop'
 import CommandPalette from '@/components/shared/CommandPalette'
 import StarField from '@/components/shared/StarField'
 import Dock from '@/components/shared/Dock'
@@ -33,6 +34,7 @@ function AppInner() {
 
   return (
     <>
+      <ScrollToTop />
       <StarField />
       <CustomCursor />
       <ScrollProgress />

@@ -82,8 +82,8 @@ export default function Dock() {
   useEffect(() => {
     if (location.pathname !== '/') return
 
-    window.scrollTo(0, 0)
-
+    // Scroll reset lives in ScrollToTop now — it belongs to navigation, not to
+    // this component's scroll-spy.
     // Defer observer setup to the next macrotask so the scroll has been
     // committed to layout before the initial intersection check fires
     let observers = []
